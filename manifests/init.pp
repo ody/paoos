@@ -1,20 +1,15 @@
-application db_host (
-
-) {
-  paoos::mysql_host{ $name:
-    export => Sql_host[$name],
-  }
-}
-
-application database (
+application api_db (
   $user,
   $password,
-  $db_host
+  $cluster,
 ) {
+  paoos::mysql_host{ $cluster:
+    export => Sql_host[$cluster],
+  }
   paoos::database { $name:
     user     => $user,
     password => $password,
-    consume  => Sql_host[$sql_host],
+    consume  => Sql_host[$cluster],
     export   => Database[$name]
   }
 }

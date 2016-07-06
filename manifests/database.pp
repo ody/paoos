@@ -1,21 +1,20 @@
-define paoos::database
-(
+define paoos::database(
   $user,
   $password,
-  $host = $::hostname,
+  $db_host,
   $database = $name,
 ) {
-  notify ( "configured ${name} osmar::database")
+  notify { "configured ${name} osmar::database with ${db_host}": }
 }
 
 Paoos::Database consumes Sql_host {
-  host => $host,
+  db_host => $host,
 }
 
 Paoos::Database produces Database {
   user     => $user,
   password => $password,
-  host     => $host,
+  host     => $db_host,
   database => $database,
 }
 

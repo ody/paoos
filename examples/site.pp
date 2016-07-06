@@ -23,11 +23,16 @@ File { backup => false }
 # definition. If there are no other nodes in this file, classes declared here
 # will be included in every node's catalog, *in addition* to any classes
 # specified in the console for that node.
-node 'learning.puppetlabs.vm' {
-  include multi_node
+
+node default {
+  # This is where you can declare classes for all nodes.
+  # Example:
+  #   class { 'my_class': }
+  notify { "This is ${::fqdn}, running the ${::operatingsystem} operating system": }
 }
-
-
+node learning.puppetlabs.vm {
+    include multi_node
+}
 node /^(webserver|database).*$/ {
   pe_ini_setting { 'use_cached_catalog':
     ensure  => present,
@@ -44,25 +49,25 @@ node /^(webserver|database).*$/ {
     value   => 'false',
   }
 }
-
-node default {
-  # This is where you can declare classes for all nodes.
-  # Example:
-  #   class { 'my_class': }
-}
+#site {
+#  lamp { 'app1':
+#    db_user     => 'roland',
+#    db_password => '12345',
+#    nodes       => {
+#      Node['database.learn.localdomain']  => Lamp::Mysql['app1'],
+#      Node['webserver.learn.localdomain'] => Lamp::Webapp['app1'],
+#    }
+#  }
+#}
 
 site {
-/*  db_host { 'cluster1':
-    nodes =>  {
-      Node['database.learning.puppetlabs.vm'] => Paoos::Sql_host[$name],
-    }
-  }*/
-  database { 'foo':
-    user     => 'foo',
+  api_db { 'heat':
+    user     => 'heat',
     password => 'bar',
-    sql_host => 'cluster1',
+    cluster  => 'cluster1',
     nodes   => {
-      Node['database.learning.puppetlabs.vm'] => Paoos::Database[$name],
+      Node['database.learn.localdomain'] => Paoos::Mysql_host['cluster1'],
+      Node['webserver.learn.localdomain'] => Paoos::Database['heat'],
     }
   }
 }
