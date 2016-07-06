@@ -52,17 +52,11 @@ node default {
 }
 
 site {
-/*  db_host { 'cluster1':
-    nodes =>  {
-      Node['database.learning.puppetlabs.vm'] => Paoos::Sql_host[$name],
-    }
-  }*/
-  database { 'foo':
-    user     => 'foo',
-    password => 'bar',
-    sql_host => 'cluster1',
-    nodes   => {
-      Node['database.learning.puppetlabs.vm'] => Paoos::Database[$name],
+  paoos::openstack_service{'asdf':
+    nodes => { ##
+      ##
+      Node['database.learning.puppetlabs.vm']  => [ Paoos::Db['asdf'], Paoos::Amqp['asdf']],
+      Node['webserver.learning.puppetlabs.vm'] => Paoos::App['asdf'],
     }
   }
 }
