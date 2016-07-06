@@ -60,14 +60,23 @@ node /^(webserver|database).*$/ {
 #  }
 #}
 
+# The following expects these variables added to hiera at /etc/puppetlabs/code/hieradata/defaults.yaml
+# paoos::database::user::heat: 'heat'
+# paoos::database::passwd::heat: 'secret_heat_password'
+# paoos::database::user::glance: 'glance'
+# paoos::database::passwd::glance: 'secret_glance_password'
+# paoos::database::user::cinder: 'cinder'
+# paoos::database::passwd::cinder: 'secret_cinder_password'
+# paoos::database::user::nova: 'nova'
+# paoos::database::passwd::nova: 'secret_nova_password'
+
 site {
-  api_db { 'heat':
-    user     => 'heat',
-    password => 'bar',
-    cluster  => 'cluster1',
+  api_db { 'openstack':
+    databases => ['heat', 'glance', 'cinder', 'nova'],
+    cluster   => 'cluster1',
     nodes   => {
       Node['database.learn.localdomain'] => Paoos::Mysql_host['cluster1'],
-      Node['webserver.learn.localdomain'] => Paoos::Database['heat'],
+      Node['webserver.learn.localdomain'] => [ Paoos::Database['heat'], Paoos::Database['glance'], Paoos::Database['cinder'], Paoos::Database['nova'] ]
     }
   }
 }

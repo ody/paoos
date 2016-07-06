@@ -1,16 +1,17 @@
 application api_db (
-  $user,
-  $password,
   $cluster,
+  $databases,
 ) {
   paoos::mysql_host{ $cluster:
     export => Sql_host[$cluster],
   }
-  paoos::database { $name:
-    user     => $user,
-    password => $password,
-    consume  => Sql_host[$cluster],
-    export   => Database[$name]
+  each($databases) |$d| {
+    paoos::database { $d:
+      user     => hiera("paoos::database::user::${d}"),
+      password => hiera("paoos::database::passwd::${d}"),
+      consume  => Sql_host[$cluster],
+      export   => Database["${name}::${d}"]
+    }
   }
 }
 
